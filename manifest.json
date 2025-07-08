@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Pixiv Customizer",
+  "version": "1.0",
+  "description": "PixivのUIをカスタマイズする拡張機能",
+  "permissions": ["scripting"],
+  "content_scripts": [
+    {
+      "matches": ["*://www.pixiv.net/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
