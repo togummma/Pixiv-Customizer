@@ -6,17 +6,19 @@ let settings = {
   feature1: true,  // bg-surface1拡大 & bg-background2削除
   feature2: true,  // コメント領域を非表示
   feature3: true,  // 人気作品領域を非表示
-  feature4: true   // 「すべて見る」ボタンを削除
+  feature4: true,  // 「すべて見る」ボタンを削除
+  feature5: true   // サイドメニュー要素を非表示
 };
 
 // 設定を読み込み
 async function loadSettings() {
   try {
-    const result = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3', 'feature4']);
+    const result = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3', 'feature4', 'feature5']);
     settings.feature1 = result.feature1 !== undefined ? result.feature1 : true;
     settings.feature2 = result.feature2 !== undefined ? result.feature2 : true;
     settings.feature3 = result.feature3 !== undefined ? result.feature3 : true;
     settings.feature4 = result.feature4 !== undefined ? result.feature4 : true;
+    settings.feature5 = result.feature5 !== undefined ? result.feature5 : true;
   } catch (error) {
     console.log('設定の読み込みに失敗しました:', error);
   }
@@ -179,6 +181,26 @@ function enableSeeAllButtons() {
 }
 
 // =========================
+// サイドメニュー要素を非表示にする処理
+// =========================
+function hideSideMenuElement() {
+  if (!settings.feature5) return;
+  
+  const sideMenuElement = document.querySelector('#__next > div > div:nth-child(2) > div.sc-1e6e6d57-0.gQkIQm.__top_side_menu_body > div > div.bg-background1 > div:nth-child(5)');
+  if (sideMenuElement) {
+    sideMenuElement.style.display = 'none';
+  }
+}
+
+// サイドメニュー要素の表示をリセットする関数
+function showSideMenuElement() {
+  const sideMenuElement = document.querySelector('#__next > div > div:nth-child(2) > div.sc-1e6e6d57-0.gQkIQm.__top_side_menu_body > div > div.bg-background1 > div:nth-child(5)');
+  if (sideMenuElement) {
+    sideMenuElement.style.display = '';
+  }
+}
+
+// =========================
 // すべての機能を実行
 // =========================
 function applyAllFeatures() {
@@ -187,6 +209,7 @@ function applyAllFeatures() {
   hideCommentSection();
   hidePopularWorksSection();
   disableSeeAllButtons();
+  hideSideMenuElement();
 }
 
 // =========================
@@ -236,6 +259,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         disableSeeAllButtons();
       } else {
         enableSeeAllButtons();
+      }
+    }
+    
+    if (message.feature === 'feature5') {
+      if (message.enabled) {
+        hideSideMenuElement();
+      } else {
+        showSideMenuElement();
       }
     }
     
