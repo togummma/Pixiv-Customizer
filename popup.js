@@ -1,17 +1,19 @@
 // ポップアップが読み込まれた時の処理
 document.addEventListener('DOMContentLoaded', async () => {
   // 保存された設定を読み込み
-  const settings = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3']);
+  const settings = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3', 'feature4']);
   
   // デフォルト値を設定（初回起動時）
   const feature1 = settings.feature1 !== undefined ? settings.feature1 : true;
   const feature2 = settings.feature2 !== undefined ? settings.feature2 : true;
   const feature3 = settings.feature3 !== undefined ? settings.feature3 : true;
+  const feature4 = settings.feature4 !== undefined ? settings.feature4 : true;
   
   // トグルスイッチの状態を設定
   updateToggleState('toggle1', feature1);
   updateToggleState('toggle2', feature2);
   updateToggleState('toggle3', feature3);
+  updateToggleState('toggle4', feature4);
   
   // イベントリスナーを設定
   document.getElementById('toggle1').addEventListener('click', () => {
@@ -24,6 +26,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   document.getElementById('toggle3').addEventListener('click', () => {
     toggleFeature('toggle3', 'feature3');
+  });
+  
+  document.getElementById('toggle4').addEventListener('click', () => {
+    toggleFeature('toggle4', 'feature4');
   });
 });
 

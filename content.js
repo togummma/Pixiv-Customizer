@@ -1,4 +1,3 @@
-
 //1
 // =========================
 // 設定管理
@@ -6,16 +5,18 @@
 let settings = {
   feature1: true,  // bg-surface1拡大 & bg-background2削除
   feature2: true,  // コメント領域を非表示
-  feature3: true   // 人気作品領域を非表示
+  feature3: true,  // 人気作品領域を非表示
+  feature4: true   // 「すべて見る」ボタンを削除
 };
 
 // 設定を読み込み
 async function loadSettings() {
   try {
-    const result = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3']);
+    const result = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3', 'feature4']);
     settings.feature1 = result.feature1 !== undefined ? result.feature1 : true;
     settings.feature2 = result.feature2 !== undefined ? result.feature2 : true;
     settings.feature3 = result.feature3 !== undefined ? result.feature3 : true;
+    settings.feature4 = result.feature4 !== undefined ? result.feature4 : true;
   } catch (error) {
     console.log('設定の読み込みに失敗しました:', error);
   }
@@ -134,6 +135,50 @@ function showPopularWorksSection() {
 }
 
 // =========================
+// 「すべて見る」ボタンのイベントを無効化する処理
+// =========================
+function disableSeeAllButtons() {
+  if (!settings.feature4) return;
+  
+  // より具体的なセレクターで「すべて見る」ボタンを検索
+  document.querySelectorAll('button.charcoal-button[data-variant="Navigation"]').forEach((button) => {
+    if (button.textContent.includes('すべて見る')) {
+      // クリックイベントを無効化
+      button.style.pointerEvents = 'none';
+      button.style.opacity = '0.5';
+      button.style.cursor = 'default';
+      // data属性でマーク
+      button.setAttribute('data-pixiv-customizer-disabled', 'true');
+    }
+  });
+  
+  // より広範囲で「すべて見る」ボタンを検索
+  document.querySelectorAll('button').forEach((button) => {
+    if (button.textContent.trim() === 'すべて見る' && !button.hasAttribute('data-pixiv-customizer-disabled')) {
+      // クリックイベントを無効化
+      button.style.pointerEvents = 'none';
+      button.style.opacity = '0.5';
+      button.style.cursor = 'default';
+      // data属性でマーク
+      button.setAttribute('data-pixiv-customizer-disabled', 'true');
+    }
+  });
+}
+
+// 「すべて見る」ボタンのイベントを再有効化する関数
+function enableSeeAllButtons() {
+  // 無効化されたボタンを検索して元に戻す
+  document.querySelectorAll('button[data-pixiv-customizer-disabled="true"]').forEach((button) => {
+    // スタイルを元に戻す
+    button.style.pointerEvents = '';
+    button.style.opacity = '';
+    button.style.cursor = '';
+    // マークを削除
+    button.removeAttribute('data-pixiv-customizer-disabled');
+  });
+}
+
+// =========================
 // すべての機能を実行
 // =========================
 function applyAllFeatures() {
@@ -141,6 +186,7 @@ function applyAllFeatures() {
   removeBgBackground2InsideGrid();
   hideCommentSection();
   hidePopularWorksSection();
+  disableSeeAllButtons();
 }
 
 // =========================
@@ -182,6 +228,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         hidePopularWorksSection();
       } else {
         showPopularWorksSection();
+      }
+    }
+    
+    if (message.feature === 'feature4') {
+      if (message.enabled) {
+        disableSeeAllButtons();
+      } else {
+        enableSeeAllButtons();
       }
     }
     
