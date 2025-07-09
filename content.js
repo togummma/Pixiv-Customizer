@@ -1,53 +1,63 @@
-// Pixivの「おすすめユーザー」「コンテスト」などを含む右サイドバーを非表示にする
-
-function findSidebarElement() {
-  // サイドバーの候補をすべて取得
-  const candidates = document.querySelectorAll("div.sticky.box-border");
-
-  for (const el of candidates) {
-    const classList = el.classList;
-
-    // 幅を指定するクラスが 'w-' で始まっており、overflow-y-auto を含むか確認
-    if (
-      Array.from(classList).some(cls => cls.startsWith("w-")) &&
-      classList.contains("overflow-y-auto")
-    ) {
-      return el;
-    }
-  }
-
-  return null;
-}
-
-// DOMが構築されたあとに繰り返し確認
-function waitForSidebar(timeout = 10000) {
-  return new Promise((resolve, reject) => {
-    const interval = 100;
-    const maxTries = timeout / interval;
-    let tries = 0;
-
-    const check = () => {
-      const el = findSidebarElement();
-      if (el) {
-        resolve(el);
-        return;
-      }
-      tries++;
-      if (tries > maxTries) {
-        reject("右サイドバーが見つかりませんでした");
-        return;
-      }
-      setTimeout(check, interval);
-    };
-
-    check();
+// =========================
+// bg-surface1 を拡大する処理
+// =========================
+function scaleBgSurface1() {
+  document.querySelectorAll(".bg-surface1").forEach((element) => {
+    element.style.transform = "scale(1.1)";
+    element.style.transformOrigin = "top left";
   });
 }
 
-waitForSidebar()
-  .then((sidebar) => {
-    sidebar.style.display = "none";
-  })
-  .catch((err) => {
-    console.warn("Pixiv Customizer: ", err);
+// =========================
+// .grid の直下にある bg-background2 を削除する処理
+// =========================
+function removeBgBackground2InsideGrid() {
+  document.querySelectorAll("div.grid").forEach((grid) => {
+    Array.from(grid.children).forEach((child) => {
+      if (child.classList.contains("bg-background2")) {
+        child.remove(); // 子要素もろとも削除
+      }
+    });
   });
+}
+
+// =========================
+// コメントのフレックスボックスを非表示にする処理
+// =========================
+function hideCommentFlexBox() {
+  document.querySelectorAll(
+    "div.w-full.flex.flex-col.pt-16.pb-24"
+  ).forEach((parent) => {
+    Array.from(parent.children).forEach((child) => {
+      if (
+        child.classList.contains("bg-surface3") &&
+        child.getAttribute("data-ga4-label") === "comment"
+      ) {
+        child.style.display = "none";
+      }
+    });
+  });
+}
+
+// =========================
+// DOM初期ロード時に1回実行
+// =========================
+window.addEventListener("load", () => {
+  scaleBgSurface1();
+  removeBgBackground2InsideGrid();
+  hideCommentFlexBox(); // ← 追加
+});
+
+// =========================
+// SPA対策：DOMの変化を監視して再実行
+// =========================
+const observer = new MutationObserver(() => {
+  scaleBgSurface1();
+  removeBgBackground2InsideGrid();
+  hideCommentFlexBox(); // ← 追加
+});
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true,
+});
