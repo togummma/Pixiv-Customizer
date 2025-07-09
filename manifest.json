@@ -3,7 +3,11 @@
   "name": "Pixiv Customizer",
   "version": "1.0",
   "description": "PixivのUIをカスタマイズする拡張機能",
-  "permissions": ["scripting"],
+  "permissions": ["scripting", "storage", "tabs", "activeTab"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Pixiv Customizer"
+  },
   "content_scripts": [
     {
       "matches": ["*://www.pixiv.net/*"],
