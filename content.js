@@ -320,15 +320,15 @@ function resetFeature8() {
 // すべての機能を実行
 // =========================
 function applyAllFeatures() {
-  scaleBgSurface1();
+  hideSideMenuBottom();        // toggle7: おすすめタグを非表示
+  hideSideMenuElement();       // toggle5: おすすめ作品を非表示
+  scaleBgSurface1();           // toggle1: タイムラインのサイドバー削除
   removeBgBackground2InsideGrid();
-  hideCommentSection();
-  hidePopularWorksSection();
-  disableSeeAllButtons();
-  hideSideMenuElement();
-  hideSideMenuBottom();
-  scaleCloseButton();
-  applyFeature8();
+  hideCommentSection();        // toggle2: コメントを非表示
+  hidePopularWorksSection();   // toggle3: 他の作品を非表示
+  disableSeeAllButtons();      // toggle4: 「すべて見る」ボタンを無効
+  scaleCloseButton();          // toggle6: ｢作品を見る｣を閉じやすくする
+  applyFeature8();             // toggle8: おすすめユーザーを非表示
 }
 
 // =========================
@@ -346,6 +346,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     settings[message.feature] = message.enabled;
     
     // 変更された機能に応じて即座に処理を実行
+    if (message.feature === 'feature7') {
+      if (message.enabled) {
+        hideSideMenuBottom();
+      } else {
+        showSideMenuBottom();
+      }
+    }
+    
+    if (message.feature === 'feature5') {
+      if (message.enabled) {
+        hideSideMenuElement();
+      } else {
+        showSideMenuElement();
+      }
+    }
+    
     if (message.feature === 'feature1') {
       if (message.enabled) {
         scaleBgSurface1();
@@ -381,27 +397,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
     }
     
-    if (message.feature === 'feature5') {
-      if (message.enabled) {
-        hideSideMenuElement();
-      } else {
-        showSideMenuElement();
-      }
-    }
-    
     if (message.feature === 'feature6') {
       if (message.enabled) {
         scaleCloseButton();
       } else {
         resetCloseButton();
-      }
-    }
-    
-    if (message.feature === 'feature7') {
-      if (message.enabled) {
-        hideSideMenuBottom();
-      } else {
-        showSideMenuBottom();
       }
     }
     
