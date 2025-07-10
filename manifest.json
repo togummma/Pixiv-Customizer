@@ -13,7 +13,13 @@
   "content_scripts": [
     {
       "matches": ["*://www.pixiv.net/*"],
-      "js": ["content.js"]
+      "js": [
+        "js/settings.js",
+        "js/home-features.js", 
+        "js/artwork-features.js",
+        "js/message-handler.js",
+        "content.js"
+      ]
     }
   ]
 }
