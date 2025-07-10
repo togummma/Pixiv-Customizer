@@ -203,26 +203,44 @@ function showSideMenuElement() {
 }
 
 // =========================
-// "作品を見る"解除ボタンを拡大する処理
+// "作品を見る"解除ボタンのクリックイベント連携
 // =========================
+let closeButtonClickHandler = null;
+
 function scaleCloseButton() {
   if (!settings.feature6) return;
   
+  // 元の解除ボタン
   const closeButton = document.querySelector('body > div:nth-child(16) > div > div > div.sc-32b84af9-0.iLqGMR > div > div.sc-32b84af9-2.hhJLpt.gtm-manga-viewer-close-icon');
-  if (closeButton) {
-    closeButton.style.transform = 'scale(3)';
-    closeButton.style.transformOrigin = 'center';
-    closeButton.style.zIndex = '9999';
+  
+  // 新しい解除ボタン
+  const newCloseButton = document.querySelector('body > div:nth-child(16) > div > div > div.sc-e06c24aa-0.eRofsO > div');
+  if (newCloseButton) {
+    newCloseButton.style.cursor = 'pointer';
+    
+    // クリックイベントハンドラーを作成
+    closeButtonClickHandler = function() {
+      if (closeButton) {
+        closeButton.click();
+      }
+    };
+    
+    // クリックイベントを追加
+    newCloseButton.addEventListener('click', closeButtonClickHandler);
   }
 }
 
-// "作品を見る"解除ボタンのスケールをリセットする関数
+// "作品を見る"解除ボタンのクリックイベント連携をリセット
 function resetCloseButton() {
-  const closeButton = document.querySelector('body > div:nth-child(16) > div > div > div.sc-32b84af9-0.iLqGMR > div > div.sc-32b84af9-2.hhJLpt.gtm-manga-viewer-close-icon');
-  if (closeButton) {
-    closeButton.style.transform = '';
-    closeButton.style.transformOrigin = '';
-    closeButton.style.zIndex = '';
+  const newCloseButton = document.querySelector('body > div:nth-child(16) > div > div > div.sc-e06c24aa-0.eRofsO > div');
+  if (newCloseButton) {
+    newCloseButton.style.cursor = '';
+    
+    // イベントリスナーを削除
+    if (closeButtonClickHandler) {
+      newCloseButton.removeEventListener('click', closeButtonClickHandler);
+      closeButtonClickHandler = null;
+    }
   }
 }
 
