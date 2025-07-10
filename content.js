@@ -237,10 +237,10 @@ function scaleCloseButton() {
   // 元の解除ボタン
   const closeButton = document.querySelector('body > div:nth-child(16) > div > div > div.sc-32b84af9-0.iLqGMR > div > div.sc-32b84af9-2.hhJLpt.gtm-manga-viewer-close-icon');
   
-  // 新しい解除ボタン（更新されたセレクター）
-  const newCloseButton = document.querySelector('body > div:nth-child(18) > div > div > div.sc-e06c24aa-0.eRofsO > div.sc-e06c24aa-1.gcvEmo > div:nth-child(3)');
-  if (newCloseButton && !newCloseButton.hasAttribute('data-pixiv-customizer-enhanced')) {
-    newCloseButton.style.cursor = 'pointer';
+  // class="charcoal-token"の子のdivにイベントを追加
+  const charcoalTokenDiv = document.querySelector('.charcoal-token > div');
+  if (charcoalTokenDiv && !charcoalTokenDiv.hasAttribute('data-pixiv-customizer-enhanced')) {
+    charcoalTokenDiv.style.cursor = 'pointer';
     
     // クリックイベントハンドラーを作成
     closeButtonClickHandler = function() {
@@ -250,27 +250,27 @@ function scaleCloseButton() {
     };
     
     // クリックイベントを追加
-    newCloseButton.addEventListener('click', closeButtonClickHandler);
+    charcoalTokenDiv.addEventListener('click', closeButtonClickHandler);
     
     // マークを追加して重複を防ぐ
-    newCloseButton.setAttribute('data-pixiv-customizer-enhanced', 'true');
+    charcoalTokenDiv.setAttribute('data-pixiv-customizer-enhanced', 'true');
   }
 }
 
 // "作品を見る"解除ボタンのクリックイベント連携をリセット
 function resetCloseButton() {
-  const newCloseButton = document.querySelector('body > div:nth-child(18) > div > div > div.sc-e06c24aa-0.eRofsO > div.sc-e06c24aa-1.gcvEmo > div:nth-child(3)');
-  if (newCloseButton) {
-    newCloseButton.style.cursor = '';
+  const charcoalTokenDiv = document.querySelector('.charcoal-token > div');
+  if (charcoalTokenDiv) {
+    charcoalTokenDiv.style.cursor = '';
     
     // イベントリスナーを削除
     if (closeButtonClickHandler) {
-      newCloseButton.removeEventListener('click', closeButtonClickHandler);
+      charcoalTokenDiv.removeEventListener('click', closeButtonClickHandler);
       closeButtonClickHandler = null;
     }
     
     // マークを削除
-    newCloseButton.removeAttribute('data-pixiv-customizer-enhanced');
+    charcoalTokenDiv.removeAttribute('data-pixiv-customizer-enhanced');
   }
 }
 
