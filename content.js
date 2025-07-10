@@ -317,18 +317,41 @@ function resetFeature8() {
 }
 
 // =========================
+// ホームレイアウト関連機能（https://www.pixiv.net でのみ動作）
+// =========================
+function applyHomeFeatures() {
+  const currentUrl = window.location.href;
+  // ホームページまたは特定のホーム関連ページでのみ実行
+  if (currentUrl === 'https://www.pixiv.net/' || 
+      (currentUrl.startsWith('https://www.pixiv.net') && !currentUrl.includes('/artworks/'))) {
+    hideSideMenuBottom();        // toggle7: おすすめタグを非表示
+    hideSideMenuElement();       // toggle5: おすすめ作品を非表示
+    scaleBgSurface1();           // toggle1: タイムラインのサイドバー削除
+    removeBgBackground2InsideGrid();
+    disableSeeAllButtons();      // toggle4: 「すべて見る」ボタンを無効
+    applyFeature8();             // toggle8: おすすめユーザーを非表示
+  }
+}
+
+// =========================
+// アートワーク関連機能（https://www.pixiv.net/artworks/ でのみ動作）
+// =========================
+function applyArtworkFeatures() {
+  const currentUrl = window.location.href;
+  // アートワークページでのみ実行（/artworks/で始まり、その後のパスは無視）
+  if (currentUrl.includes('/artworks/')) {
+    hideCommentSection();        // toggle2: コメントを非表示
+    hidePopularWorksSection();   // toggle3: 他の作品を非表示
+    scaleCloseButton();          // toggle6: ｢作品を見る｣を閉じやすくする
+  }
+}
+
+// =========================
 // すべての機能を実行
 // =========================
 function applyAllFeatures() {
-  hideSideMenuBottom();        // toggle7: おすすめタグを非表示
-  hideSideMenuElement();       // toggle5: おすすめ作品を非表示
-  scaleBgSurface1();           // toggle1: タイムラインのサイドバー削除
-  removeBgBackground2InsideGrid();
-  hideCommentSection();        // toggle2: コメントを非表示
-  hidePopularWorksSection();   // toggle3: 他の作品を非表示
-  disableSeeAllButtons();      // toggle4: 「すべて見る」ボタンを無効
-  scaleCloseButton();          // toggle6: ｢作品を見る｣を閉じやすくする
-  applyFeature8();             // toggle8: おすすめユーザーを非表示
+  applyHomeFeatures();         // ホームレイアウト関連機能
+  applyArtworkFeatures();      // アートワーク関連機能
 }
 
 // =========================
@@ -348,7 +371,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // 変更された機能に応じて即座に処理を実行
     if (message.feature === 'feature7') {
       if (message.enabled) {
-        hideSideMenuBottom();
+        const currentUrl = window.location.href;
+        if (currentUrl === 'https://www.pixiv.net/' || 
+            (currentUrl.startsWith('https://www.pixiv.net') && !currentUrl.includes('/artworks/'))) {
+          hideSideMenuBottom();
+        }
       } else {
         showSideMenuBottom();
       }
@@ -356,7 +383,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
     if (message.feature === 'feature5') {
       if (message.enabled) {
-        hideSideMenuElement();
+        const currentUrl = window.location.href;
+        if (currentUrl === 'https://www.pixiv.net/' || 
+            (currentUrl.startsWith('https://www.pixiv.net') && !currentUrl.includes('/artworks/'))) {
+          hideSideMenuElement();
+        }
       } else {
         showSideMenuElement();
       }
@@ -364,8 +395,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
     if (message.feature === 'feature1') {
       if (message.enabled) {
-        scaleBgSurface1();
-        removeBgBackground2InsideGrid();
+        const currentUrl = window.location.href;
+        if (currentUrl === 'https://www.pixiv.net/' || 
+            (currentUrl.startsWith('https://www.pixiv.net') && !currentUrl.includes('/artworks/'))) {
+          scaleBgSurface1();
+          removeBgBackground2InsideGrid();
+        }
       } else {
         resetScaleBgSurface1();
         // bg-background2の削除は元に戻せないため、ページリロードが推奨
@@ -375,7 +410,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
     if (message.feature === 'feature2') {
       if (message.enabled) {
-        hideCommentSection();
+        const currentUrl = window.location.href;
+        if (currentUrl.includes('/artworks/')) {
+          hideCommentSection();
+        }
       } else {
         showCommentSection();
       }
@@ -383,7 +421,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
     if (message.feature === 'feature3') {
       if (message.enabled) {
-        hidePopularWorksSection();
+        const currentUrl = window.location.href;
+        if (currentUrl.includes('/artworks/')) {
+          hidePopularWorksSection();
+        }
       } else {
         showPopularWorksSection();
       }
@@ -391,7 +432,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
     if (message.feature === 'feature4') {
       if (message.enabled) {
-        disableSeeAllButtons();
+        const currentUrl = window.location.href;
+        if (currentUrl === 'https://www.pixiv.net/' || 
+            (currentUrl.startsWith('https://www.pixiv.net') && !currentUrl.includes('/artworks/'))) {
+          disableSeeAllButtons();
+        }
       } else {
         enableSeeAllButtons();
       }
@@ -399,7 +444,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
     if (message.feature === 'feature6') {
       if (message.enabled) {
-        scaleCloseButton();
+        const currentUrl = window.location.href;
+        if (currentUrl.includes('/artworks/')) {
+          scaleCloseButton();
+        }
       } else {
         resetCloseButton();
       }
@@ -407,7 +455,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
     if (message.feature === 'feature8') {
       if (message.enabled) {
-        applyFeature8();
+        const currentUrl = window.location.href;
+        if (currentUrl === 'https://www.pixiv.net/' || 
+            (currentUrl.startsWith('https://www.pixiv.net') && !currentUrl.includes('/artworks/'))) {
+          applyFeature8();
+        }
       } else {
         resetFeature8();
       }
