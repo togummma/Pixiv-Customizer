@@ -7,18 +7,20 @@ let settings = {
   feature2: true,  // コメント領域を非表示
   feature3: true,  // 人気作品領域を非表示
   feature4: true,  // 「すべて見る」ボタンを削除
-  feature5: true   // サイドメニュー要素を非表示
+  feature5: true,  // サイドメニュー要素を非表示
+  feature6: true   // "作品を見る"解除ボタン拡大
 };
 
 // 設定を読み込み
 async function loadSettings() {
   try {
-    const result = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3', 'feature4', 'feature5']);
+    const result = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6']);
     settings.feature1 = result.feature1 !== undefined ? result.feature1 : true;
     settings.feature2 = result.feature2 !== undefined ? result.feature2 : true;
     settings.feature3 = result.feature3 !== undefined ? result.feature3 : true;
     settings.feature4 = result.feature4 !== undefined ? result.feature4 : true;
     settings.feature5 = result.feature5 !== undefined ? result.feature5 : true;
+    settings.feature6 = result.feature6 !== undefined ? result.feature6 : true;
   } catch (error) {
     console.log('設定の読み込みに失敗しました:', error);
   }
@@ -201,6 +203,30 @@ function showSideMenuElement() {
 }
 
 // =========================
+// "作品を見る"解除ボタンを拡大する処理
+// =========================
+function scaleCloseButton() {
+  if (!settings.feature6) return;
+  
+  const closeButton = document.querySelector('body > div:nth-child(16) > div > div > div.sc-32b84af9-0.iLqGMR > div > div.sc-32b84af9-2.hhJLpt.gtm-manga-viewer-close-icon');
+  if (closeButton) {
+    closeButton.style.transform = 'scale(3)';
+    closeButton.style.transformOrigin = 'center';
+    closeButton.style.zIndex = '9999';
+  }
+}
+
+// "作品を見る"解除ボタンのスケールをリセットする関数
+function resetCloseButton() {
+  const closeButton = document.querySelector('body > div:nth-child(16) > div > div > div.sc-32b84af9-0.iLqGMR > div > div.sc-32b84af9-2.hhJLpt.gtm-manga-viewer-close-icon');
+  if (closeButton) {
+    closeButton.style.transform = '';
+    closeButton.style.transformOrigin = '';
+    closeButton.style.zIndex = '';
+  }
+}
+
+// =========================
 // すべての機能を実行
 // =========================
 function applyAllFeatures() {
@@ -210,6 +236,7 @@ function applyAllFeatures() {
   hidePopularWorksSection();
   disableSeeAllButtons();
   hideSideMenuElement();
+  scaleCloseButton();
 }
 
 // =========================
@@ -267,6 +294,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         hideSideMenuElement();
       } else {
         showSideMenuElement();
+      }
+    }
+    
+    if (message.feature === 'feature6') {
+      if (message.enabled) {
+        scaleCloseButton();
+      } else {
+        resetCloseButton();
       }
     }
     
