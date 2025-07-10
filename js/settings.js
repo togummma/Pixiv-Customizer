@@ -1,31 +1,42 @@
 // =========================
 // 設定管理
 // =========================
+const FEATURES = {
+  TIMELINE_SIDEBAR_REMOVAL: 'feature1',    // bg-surface1拡大 & bg-background2削除
+  HIDE_COMMENTS: 'feature2',               // コメント領域を非表示
+  HIDE_POPULAR_WORKS: 'feature3',          // 人気作品領域を非表示
+  DISABLE_SEE_ALL_BUTTONS: 'feature4',     // 「すべて見る」ボタンを削除
+  HIDE_SIDE_MENU_ELEMENT: 'feature5',      // サイドメニュー要素を非表示
+  CLOSE_BUTTON_ENHANCEMENT: 'feature6',    // "作品を見る"解除ボタンクリック連携
+  HIDE_SIDE_MENU_BOTTOM: 'feature7',       // サイドメニュー下部を非表示
+  HIDE_RECOMMENDED_USERS: 'feature8',      // おすすめユーザーを非表示
+  HIDE_ARTWORK_RECOMMENDATIONS: 'feature9', // アートワークページのおすすめ作品を非表示
+  DISCOVERY_FEATURE_10: 'feature10'        // ディスカバリーページ機能1（今後拡張用）
+};
+
 let settings = {
-  feature1: true,  // bg-surface1拡大 & bg-background2削除
-  feature2: true,  // コメント領域を非表示
-  feature3: true,  // 人気作品領域を非表示
-  feature4: true,  // 「すべて見る」ボタンを削除
-  feature5: true,  // サイドメニュー要素を非表示
-  feature6: true,  // "作品を見る"解除ボタンクリック連携
-  feature7: true,  // サイドメニュー下部を非表示
-  feature8: true,  // おすすめユーザーを非表示
-  feature9: true   // アートワークページのおすすめ作品を非表示
+  [FEATURES.TIMELINE_SIDEBAR_REMOVAL]: true,
+  [FEATURES.HIDE_COMMENTS]: true,
+  [FEATURES.HIDE_POPULAR_WORKS]: true,
+  [FEATURES.DISABLE_SEE_ALL_BUTTONS]: true,
+  [FEATURES.HIDE_SIDE_MENU_ELEMENT]: true,
+  [FEATURES.CLOSE_BUTTON_ENHANCEMENT]: true,
+  [FEATURES.HIDE_SIDE_MENU_BOTTOM]: true,
+  [FEATURES.HIDE_RECOMMENDED_USERS]: true,
+  [FEATURES.HIDE_ARTWORK_RECOMMENDATIONS]: true,
+  [FEATURES.DISCOVERY_FEATURE_10]: true
 };
 
 // 設定を読み込み
 async function loadSettings() {
   try {
-    const result = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6', 'feature7', 'feature8', 'feature9']);
-    settings.feature1 = result.feature1 !== undefined ? result.feature1 : true;
-    settings.feature2 = result.feature2 !== undefined ? result.feature2 : true;
-    settings.feature3 = result.feature3 !== undefined ? result.feature3 : true;
-    settings.feature4 = result.feature4 !== undefined ? result.feature4 : true;
-    settings.feature5 = result.feature5 !== undefined ? result.feature5 : true;
-    settings.feature6 = result.feature6 !== undefined ? result.feature6 : true;
-    settings.feature7 = result.feature7 !== undefined ? result.feature7 : true;
-    settings.feature8 = result.feature8 !== undefined ? result.feature8 : true;
-    settings.feature9 = result.feature9 !== undefined ? result.feature9 : true;
+    const featureKeys = Object.values(FEATURES);
+    const result = await chrome.storage.sync.get(featureKeys);
+    
+    // 各機能の設定を読み込み（デフォルト値はtrue）
+    for (const feature of featureKeys) {
+      settings[feature] = result[feature] !== undefined ? result[feature] : true;
+    }
   } catch (error) {
     console.log('設定の読み込みに失敗しました:', error);
   }
@@ -34,12 +45,24 @@ async function loadSettings() {
 // =========================
 // URL判定ユーティリティ
 // =========================
+const PIXIV_URLS = {
+  HOME: 'https://www.pixiv.net/',
+  HOME_ALT: 'https://www.pixiv.net',
+  ARTWORKS_PATH: '/artworks/',
+  DISCOVERY: 'https://www.pixiv.net/discovery'
+};
+
 function isHomePage() {
   const currentUrl = window.location.href;
-  return currentUrl === 'https://www.pixiv.net/' || currentUrl === 'https://www.pixiv.net';
+  return currentUrl === PIXIV_URLS.HOME || currentUrl === PIXIV_URLS.HOME_ALT;
 }
 
 function isArtworkPage() {
   const currentUrl = window.location.href;
-  return currentUrl.includes('/artworks/');
+  return currentUrl.includes(PIXIV_URLS.ARTWORKS_PATH);
+}
+
+function isDiscoveryPage() {
+  const currentUrl = window.location.href;
+  return currentUrl.startsWith(PIXIV_URLS.DISCOVERY);
 }

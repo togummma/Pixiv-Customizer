@@ -8,6 +8,7 @@
 function applyAllFeatures() {
   applyHomeFeatures();         // ホームレイアウト関連機能
   applyArtworkFeatures();      // アートワーク関連機能
+  applyDiscoveryFeatures();    // ディスカバリー関連機能
 }
 
 // =========================

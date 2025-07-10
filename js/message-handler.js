@@ -97,5 +97,13 @@ function handleFeatureChange(feature, enabled) {
         showArtworkRecommendations();
       }
       break;
+      
+    case 'feature10':
+      if (enabled && isDiscoveryPage()) {
+        hideRelatedWorksSection();
+      } else {
+        showRelatedWorksSection();
+      }
+      break;
   }
 }

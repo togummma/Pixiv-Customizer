@@ -17,6 +17,7 @@
         "js/settings.js",
         "js/home-features.js", 
         "js/artwork-features.js",
+        "js/discovery-features.js",
         "js/message-handler.js",
         "content.js"
       ]
