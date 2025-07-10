@@ -16,7 +16,7 @@ let settings = {
 // 設定を読み込み
 async function loadSettings() {
   try {
-    const result = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6', 'feature7']);
+    const result = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6', 'feature7', 'feature8']);
     settings.feature1 = result.feature1 !== undefined ? result.feature1 : true;
     settings.feature2 = result.feature2 !== undefined ? result.feature2 : true;
     settings.feature3 = result.feature3 !== undefined ? result.feature3 : true;
@@ -24,6 +24,7 @@ async function loadSettings() {
     settings.feature5 = result.feature5 !== undefined ? result.feature5 : true;
     settings.feature6 = result.feature6 !== undefined ? result.feature6 : true;
     settings.feature7 = result.feature7 !== undefined ? result.feature7 : true;
+    settings.feature8 = result.feature8 !== undefined ? result.feature8 : true;
   } catch (error) {
     console.log('設定の読み込みに失敗しました:', error);
   }
@@ -238,7 +239,7 @@ function scaleCloseButton() {
   
   // 新しい解除ボタン
   const newCloseButton = document.querySelector('body > div:nth-child(16) > div > div > div.sc-e06c24aa-0.eRofsO > div');
-  if (newCloseButton) {
+  if (newCloseButton && !newCloseButton.hasAttribute('data-pixiv-customizer-enhanced')) {
     newCloseButton.style.cursor = 'pointer';
     
     // クリックイベントハンドラーを作成
@@ -250,6 +251,9 @@ function scaleCloseButton() {
     
     // クリックイベントを追加
     newCloseButton.addEventListener('click', closeButtonClickHandler);
+    
+    // マークを追加して重複を防ぐ
+    newCloseButton.setAttribute('data-pixiv-customizer-enhanced', 'true');
   }
 }
 
@@ -264,6 +268,9 @@ function resetCloseButton() {
       newCloseButton.removeEventListener('click', closeButtonClickHandler);
       closeButtonClickHandler = null;
     }
+    
+    // マークを削除
+    newCloseButton.removeAttribute('data-pixiv-customizer-enhanced');
   }
 }
 
