@@ -8,19 +8,21 @@ let settings = {
   feature3: true,  // 人気作品領域を非表示
   feature4: true,  // 「すべて見る」ボタンを削除
   feature5: true,  // サイドメニュー要素を非表示
-  feature6: true   // "作品を見る"解除ボタン拡大
+  feature6: true,  // "作品を見る"解除ボタンクリック連携
+  feature7: true   // サイドメニュー下部を非表示
 };
 
 // 設定を読み込み
 async function loadSettings() {
   try {
-    const result = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6']);
+    const result = await chrome.storage.sync.get(['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6', 'feature7']);
     settings.feature1 = result.feature1 !== undefined ? result.feature1 : true;
     settings.feature2 = result.feature2 !== undefined ? result.feature2 : true;
     settings.feature3 = result.feature3 !== undefined ? result.feature3 : true;
     settings.feature4 = result.feature4 !== undefined ? result.feature4 : true;
     settings.feature5 = result.feature5 !== undefined ? result.feature5 : true;
     settings.feature6 = result.feature6 !== undefined ? result.feature6 : true;
+    settings.feature7 = result.feature7 !== undefined ? result.feature7 : true;
   } catch (error) {
     console.log('設定の読み込みに失敗しました:', error);
   }
@@ -203,6 +205,26 @@ function showSideMenuElement() {
 }
 
 // =========================
+// サイドメニュー下部を非表示にする処理
+// =========================
+function hideSideMenuBottom() {
+  if (!settings.feature7) return;
+  
+  const sideMenuBottom = document.querySelector('#__next > div > div:nth-child(2) > div.sc-1e6e6d57-0.gQkIQm.__top_side_menu_body > div > div.bg-background1 > div.pt-24.pb-40');
+  if (sideMenuBottom) {
+    sideMenuBottom.style.display = 'none';
+  }
+}
+
+// サイドメニュー下部の表示をリセットする関数
+function showSideMenuBottom() {
+  const sideMenuBottom = document.querySelector('#__next > div > div:nth-child(2) > div.sc-1e6e6d57-0.gQkIQm.__top_side_menu_body > div > div.bg-background1 > div.pt-24.pb-40');
+  if (sideMenuBottom) {
+    sideMenuBottom.style.display = '';
+  }
+}
+
+// =========================
 // "作品を見る"解除ボタンのクリックイベント連携
 // =========================
 let closeButtonClickHandler = null;
@@ -254,6 +276,7 @@ function applyAllFeatures() {
   hidePopularWorksSection();
   disableSeeAllButtons();
   hideSideMenuElement();
+  hideSideMenuBottom();
   scaleCloseButton();
 }
 
@@ -320,6 +343,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         scaleCloseButton();
       } else {
         resetCloseButton();
+      }
+    }
+    
+    if (message.feature === 'feature7') {
+      if (message.enabled) {
+        hideSideMenuBottom();
+      } else {
+        showSideMenuBottom();
       }
     }
     
