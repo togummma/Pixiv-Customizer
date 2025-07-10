@@ -237,8 +237,8 @@ function scaleCloseButton() {
   // 元の解除ボタン
   const closeButton = document.querySelector('body > div:nth-child(16) > div > div > div.sc-32b84af9-0.iLqGMR > div > div.sc-32b84af9-2.hhJLpt.gtm-manga-viewer-close-icon');
   
-  // 新しい解除ボタン
-  const newCloseButton = document.querySelector('body > div:nth-child(16) > div > div > div.sc-e06c24aa-0.eRofsO > div');
+  // 新しい解除ボタン（更新されたセレクター）
+  const newCloseButton = document.querySelector('body > div:nth-child(18) > div > div > div.sc-e06c24aa-0.eRofsO > div.sc-e06c24aa-1.gcvEmo > div:nth-child(3)');
   if (newCloseButton && !newCloseButton.hasAttribute('data-pixiv-customizer-enhanced')) {
     newCloseButton.style.cursor = 'pointer';
     
@@ -259,7 +259,7 @@ function scaleCloseButton() {
 
 // "作品を見る"解除ボタンのクリックイベント連携をリセット
 function resetCloseButton() {
-  const newCloseButton = document.querySelector('body > div:nth-child(16) > div > div > div.sc-e06c24aa-0.eRofsO > div');
+  const newCloseButton = document.querySelector('body > div:nth-child(18) > div > div > div.sc-e06c24aa-0.eRofsO > div.sc-e06c24aa-1.gcvEmo > div:nth-child(3)');
   if (newCloseButton) {
     newCloseButton.style.cursor = '';
     
