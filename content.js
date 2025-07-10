@@ -10,7 +10,7 @@ let settings = {
   feature5: true,  // サイドメニュー要素を非表示
   feature6: true,  // "作品を見る"解除ボタンクリック連携
   feature7: true,  // サイドメニュー下部を非表示
-  feature8: true   // アートワーク要素を非表示
+  feature8: true   // おすすめユーザーを非表示
 };
 
 // 設定を読み込み
@@ -275,27 +275,34 @@ function resetCloseButton() {
 }
 
 // =========================
-// Feature8: アートワーク要素を非表示
+// Feature8: おすすめユーザーを非表示
 // =========================
 function applyFeature8() {
   if (!settings.feature8) return;
   
-  // より堅牢なセレクタを使用
-  // おすすめユーザーセクションを特定
-  const recommendedUsers = document.querySelectorAll('[data-ga4-label*="recommend"], [data-testid*="recommend"], section[aria-label*="おすすめ"], section[aria-label*="推薦"]');
+  // おすすめユーザーのコンテンツを含むdivを検索し、その親を非表示にする
+  const recommendedUserElements = document.querySelectorAll('div');
   
-  // フォールバック: 従来のセレクタ
-  if (recommendedUsers.length === 0) {
-    const artworkElement = document.querySelector('body > div:nth-child(11) > div');
-    if (artworkElement) {
-      artworkElement.style.display = 'none';
-      artworkElement.setAttribute('data-pixiv-customizer-hidden', 'true');
+  recommendedUserElements.forEach(div => {
+    // テキストコンテンツでおすすめユーザーセクションを特定（完全一致）
+    const textContent = div.textContent ? div.textContent.trim() : '';
+    const hasRecommendedUserContent = textContent === 'おすすめユーザー';
+    
+    if (hasRecommendedUserContent && !div.hasAttribute('data-pixiv-customizer-hidden')) {
+      // 親要素を非表示にする
+      const parentElement = div.parentElement;
+      if (parentElement) {
+        parentElement.style.display = 'none';
+        parentElement.setAttribute('data-pixiv-customizer-hidden', 'true');
+      }
     }
-  } else {
-    recommendedUsers.forEach(element => {
-      element.style.display = 'none';
-      element.setAttribute('data-pixiv-customizer-hidden', 'true');
-    });
+  });
+  
+  // フォールバック: 従来のセレクタも維持
+  const artworkElement = document.querySelector('body > div:nth-child(11) > div');
+  if (artworkElement && !artworkElement.hasAttribute('data-pixiv-customizer-hidden')) {
+    artworkElement.style.display = 'none';
+    artworkElement.setAttribute('data-pixiv-customizer-hidden', 'true');
   }
 }
 
@@ -307,13 +314,6 @@ function resetFeature8() {
     element.style.display = '';
     element.removeAttribute('data-pixiv-customizer-hidden');
   });
-  
-  // フォールバック: 従来のセレクタ
-  const artworkElement = document.querySelector('body > div:nth-child(11) > div');
-  if (artworkElement) {
-    artworkElement.style.display = '';
-    artworkElement.removeAttribute('data-pixiv-customizer-hidden');
-  }
 }
 
 // =========================
