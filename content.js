@@ -9,7 +9,8 @@ let settings = {
   feature4: true,  // 「すべて見る」ボタンを削除
   feature5: true,  // サイドメニュー要素を非表示
   feature6: true,  // "作品を見る"解除ボタンクリック連携
-  feature7: true   // サイドメニュー下部を非表示
+  feature7: true,  // サイドメニュー下部を非表示
+  feature8: true   // アートワーク要素を非表示
 };
 
 // 設定を読み込み
@@ -267,6 +268,48 @@ function resetCloseButton() {
 }
 
 // =========================
+// Feature8: アートワーク要素を非表示
+// =========================
+function applyFeature8() {
+  if (!settings.feature8) return;
+  
+  // より堅牢なセレクタを使用
+  // おすすめユーザーセクションを特定
+  const recommendedUsers = document.querySelectorAll('[data-ga4-label*="recommend"], [data-testid*="recommend"], section[aria-label*="おすすめ"], section[aria-label*="推薦"]');
+  
+  // フォールバック: 従来のセレクタ
+  if (recommendedUsers.length === 0) {
+    const artworkElement = document.querySelector('body > div:nth-child(11) > div');
+    if (artworkElement) {
+      artworkElement.style.display = 'none';
+      artworkElement.setAttribute('data-pixiv-customizer-hidden', 'true');
+    }
+  } else {
+    recommendedUsers.forEach(element => {
+      element.style.display = 'none';
+      element.setAttribute('data-pixiv-customizer-hidden', 'true');
+    });
+  }
+}
+
+// Feature8リセット関数
+function resetFeature8() {
+  // カスタム属性でマークされた要素を復元
+  const hiddenElements = document.querySelectorAll('[data-pixiv-customizer-hidden="true"]');
+  hiddenElements.forEach(element => {
+    element.style.display = '';
+    element.removeAttribute('data-pixiv-customizer-hidden');
+  });
+  
+  // フォールバック: 従来のセレクタ
+  const artworkElement = document.querySelector('body > div:nth-child(11) > div');
+  if (artworkElement) {
+    artworkElement.style.display = '';
+    artworkElement.removeAttribute('data-pixiv-customizer-hidden');
+  }
+}
+
+// =========================
 // すべての機能を実行
 // =========================
 function applyAllFeatures() {
@@ -278,6 +321,7 @@ function applyAllFeatures() {
   hideSideMenuElement();
   hideSideMenuBottom();
   scaleCloseButton();
+  applyFeature8();
 }
 
 // =========================
@@ -351,6 +395,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         hideSideMenuBottom();
       } else {
         showSideMenuBottom();
+      }
+    }
+    
+    if (message.feature === 'feature8') {
+      if (message.enabled) {
+        applyFeature8();
+      } else {
+        resetFeature8();
       }
     }
     
